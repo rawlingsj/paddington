@@ -25,7 +25,6 @@ pipeline {
               sh "make linux"
               sh 'export VERSION=$PREVIEW_VERSION && skaffold run -f skaffold.yaml'
 
-              sh "jx step validate --min-jx-version 1.2.36"
               sh "jx step post build --image \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION"
             }
           }
@@ -53,7 +52,6 @@ pipeline {
                 sh "git checkout master"
                 // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
                 sh "git config --global credential.helper store"
-                sh "jx step validate --min-jx-version 1.1.73"
                 sh "jx step git credentials"
 
                 sh "make tag"
@@ -62,7 +60,6 @@ pipeline {
               container('go') {
                 sh "make build"
                 sh 'export VERSION=`cat VERSION` && skaffold run -f skaffold.yaml'
-                sh "jx step validate --min-jx-version 1.2.36"
                 sh "jx step post build --image \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
               }
             }
